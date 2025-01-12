@@ -1625,7 +1625,7 @@ class PointOfSale extends Component<Props, State> {
                 </div>
 
                 <div className="modal zoom-out-entrance" id="checkoutModal" tabIndex={-1} aria-labelledby="checkoutModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-dialog-centered modal-lg">
+                    <div className="modal-dialog" style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)' }}>
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title" id="checkoutModalLabel"></h5>

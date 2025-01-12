@@ -1,3 +1,25 @@
 .form-select {
     width: auto !important;
 }
+
+/* Global styles for layout */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.col-md-6, .col-lg-4 {
+    max-width: 100%;
+}
+
+@media (min-width: 768px) {
+    .col-md-6 {
+        max-width: 50%;
+    }
+}
+
+@media (min-width: 1024px) {
+    .col-lg-4 {
+        max-width: 33.33%;
+    }
+}
