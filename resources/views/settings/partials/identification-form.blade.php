@@ -72,7 +72,7 @@
         <div class="form-text">@lang('This will be shown on the receipt')</div>
     </div>
 
-    <div class="mb-3">
+    <!-- <div class="mb-3">
         <label for="logo" class="form-label">@lang('SVG Logo')</label>
         <textarea name="logo" class="form-control @error('logo') is-invalid @enderror"
             id="logo">{{ old('logo', $settings->logo) }}</textarea>
@@ -82,7 +82,7 @@
             </div>
         @enderror
         <div class="form-text">@lang('This will be shown on the receipt')</div>
-    </div>
+    </div> -->
 
     <div class="mb-3">
         <label for="lang" class="form-label">@lang('Language')</label>
