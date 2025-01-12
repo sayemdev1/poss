@@ -125,6 +125,8 @@ class PointOfSale extends Component<Props, State> {
         };
     }
 
+    
+
     specialCustomerPrice = (prod: IProduct): number => {
         if (!this.state.customer) return prod.price || 0;
         if (this.state.customer.order_details.length == 0) return prod.price || 0;
@@ -212,6 +214,7 @@ class PointOfSale extends Component<Props, State> {
             }
         });
     };
+    
 
     resetPos = (): void => {
         var settings = this.getAppSettings();
@@ -1766,8 +1769,8 @@ class PointOfSale extends Component<Props, State> {
                         </div>
                     </div>
                 </div>
-                <ToastContainer position="bottom-left" autoClose={2000} pauseOnHover theme="colored" hideProgressBar={true} />
-            </React.Fragment>
+                <ToastContainer position="top-center" autoClose={2000} pauseOnHover theme="colored" hideProgressBar={true} />
+                </React.Fragment>
         );
     }
 }
