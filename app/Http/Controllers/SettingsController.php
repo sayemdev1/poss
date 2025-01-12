@@ -112,7 +112,7 @@ class SettingsController extends Controller
         Settings::updateValue(Settings::STORE_EMAIL, $request->store_email);
         Settings::updateValue(Settings::STORE_ADDITIONAL_INFO, $request->store_additional_info);
         Settings::updateValue(Settings::LANGUAGE, $request->lang);
-        Settings::updateValue(Settings::SVG_LOGO, $request->logo);
+        // Settings::updateValue(Settings::SVG_LOGO, $request->logo);
 
         return Redirect::back()->with("success", __("Settings has been updated", [], $request->lang ?? 'en'));
     }
