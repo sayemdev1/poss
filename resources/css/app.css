@@ -23,3 +23,20 @@
         max-width: 33.33%;
     }
 }
+
+/* Custom CSS for positioning the modal in the top-right */
+.modal.fade {
+    position: fixed;         /* Fixed positioning to stay at the same spot */
+    top: 10px;               /* Distance from the top of the screen */
+    right: 10px;             /* Distance from the right edge of the screen */
+    z-index: 1050;           /* Ensure it's above other elements */
+}
+
+.modal-dialog {
+    margin: 0;               /* Remove default margin */
+}
+
+.modal-content {
+    width: auto;             /* Adjust width */
+    max-width: 100%;         /* Ensure it doesn't overflow */
+}
