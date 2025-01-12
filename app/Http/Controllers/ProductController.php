@@ -267,15 +267,27 @@ class ProductController extends Controller
         ]);
 
         // Check for duplicate product by name
-        if (Product::where('name', $request->name)->exists()) {
-            return Redirect::back()->withErrors(['name' => __('Product already exists.')]);
+        if (
+            Product::where('name', $request->name)
+                ->where('imei_barcode', $request->imei_barcode)
+                ->exists()
+        ) {
+            return Redirect::back()->withErrors(['name' => __('Product with the same name and IMEI already exists.')]);
         }
+
 
         $wholesale_price = 0;
         $retailsale_price = 0;
-        if($request->wholesale_price === null && $request->retailsale_price !== null) {$wholesale_price = $request->retailsale_price * 10;$retailsale_price = $request->retailsale_price;}
-        else if($request->wholesale_price !== null && $request->retailsale_price === null) {$retailsale_price = $request->wholesale_price / 10;$wholesale_price = $request->wholesale_price;}
-        else if($request->wholesale_price !== null && $request->retailsale_price !== null) {$wholesale_price = $request->wholesale_price;$retailsale_price = $request->retailsale_price;}
+        if ($request->wholesale_price === null && $request->retailsale_price !== null) {
+            $wholesale_price = $request->retailsale_price * 10;
+            $retailsale_price = $request->retailsale_price;
+        } else if ($request->wholesale_price !== null && $request->retailsale_price === null) {
+            $retailsale_price = $request->wholesale_price / 10;
+            $wholesale_price = $request->wholesale_price;
+        } else if ($request->wholesale_price !== null && $request->retailsale_price !== null) {
+            $wholesale_price = $request->wholesale_price;
+            $retailsale_price = $request->retailsale_price;
+        }
 
         $product = Product::create([
             'name' => $request->name,
@@ -301,7 +313,7 @@ class ProductController extends Controller
 
         ]);
 
-        echo($request->retailsale_price);
+        echo ($request->retailsale_price);
 
         if ($request->has('image')) {
             $product->updateImage($request->image);
@@ -346,9 +358,16 @@ class ProductController extends Controller
         ]);
         $wholesale_price = 0;
         $retailsale_price = 0;
-        if($request->wholesale_price === null && $request->retailsale_price !== null) {$wholesale_price = $request->retailsale_price * 20;$retailsale_price = $request->retailsale_price;}
-        else if($request->wholesale_price !== null && $request->retailsale_price === null) {$retailsale_price = $request->wholesale_price / 20;$wholesale_price = $request->wholesale_price;}
-        else if($request->wholesale_price !== null && $request->retailsale_price !== null) {$wholesale_price = $request->wholesale_price;$retailsale_price = $request->retailsale_price;}
+        if ($request->wholesale_price === null && $request->retailsale_price !== null) {
+            $wholesale_price = $request->retailsale_price * 20;
+            $retailsale_price = $request->retailsale_price;
+        } else if ($request->wholesale_price !== null && $request->retailsale_price === null) {
+            $retailsale_price = $request->wholesale_price / 20;
+            $wholesale_price = $request->wholesale_price;
+        } else if ($request->wholesale_price !== null && $request->retailsale_price !== null) {
+            $wholesale_price = $request->wholesale_price;
+            $retailsale_price = $request->retailsale_price;
+        }
         $product->update([
             'name' => $request->name,
             'sort_order' => $request->sort_order ?? 1,
@@ -374,7 +393,7 @@ class ProductController extends Controller
             'track_stock' => $request->has('track_stock'),
             'continue_selling_when_out_of_stock' => $request->has('continue_selling_when_out_of_stock'),
 
-            'width' =>  $request->width ?? 0,
+            'width' => $request->width ?? 0,
             'length' => $request->length ?? 0,
             'color' => $request->color,
             'type' => $request->type,
