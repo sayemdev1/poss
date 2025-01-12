@@ -5,6 +5,7 @@ export interface IProduct {
     image_url: string;
     wholesale_barcode: string;
     retail_barcode: string;
+    imei_barcode: string;
     wholesale_sku: string;
     retail_sku: string;
     price: number | undefined;

@@ -1012,7 +1012,7 @@ class PointOfSale extends Component<Props, State> {
                                         className="form-control form-control-lg rounded-0"
                                         name="search"
                                         id="barcode-input"
-                                        placeholder={t('Scan barcode or search by name or SKU', 'امسح الباركود ضوئيًا أو ابحث بالاسم أو SKU')}
+                                        placeholder={t('Scan barcode or IMEI or search by name or SKU', 'امسح الباركود ضوئيًا أو ابحث بالاسم أو SKU')}
                                         onChange={event => this.handleSearchChange(event)}
                                     />
                                 </form>

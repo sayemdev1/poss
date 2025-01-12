@@ -319,7 +319,7 @@
     "Make sure your account uses a long, random password to stay secure.": "تأكد من أن حسابك يستخدم كلمة مرور طويلة وعشوائية للبقاء آمنًا.",
     "Whoops, something went wrong on our servers.": "عفوًا، حدث خطأ ما على خوادمنا.",
 
-    "Scan barcode or search by name or SKU":"امسح الباركود ضوئيًا أو ابحث بالاسم أو SKU",
+    "Scan barcode or IMEI or search by name or SKU":"امسح الباركود ضوئيًا أو ابحث بالاسم أو SKU",
     "Paid": "المدفوع",
     "Unpaid": "غير مدفوعة الأجر"
 }
