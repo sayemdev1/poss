@@ -12,6 +12,7 @@ interface ICartItem extends IProduct {
 }
 type Props = {
     settings: any;
+    logoUrl?: string;
 };
 type State = {
     categories: ICategory[];

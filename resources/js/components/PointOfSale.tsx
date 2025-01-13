@@ -26,6 +26,7 @@ interface ICartItem extends IProduct {
 
 type Props = {
     settings: any;
+    logoUrl?: string;
 };
 
 type State = {
@@ -125,7 +126,7 @@ class PointOfSale extends Component<Props, State> {
         };
     }
 
-    
+
 
     specialCustomerPrice = (prod: IProduct): number => {
         if (!this.state.customer) return prod.price || 0;
@@ -192,6 +193,7 @@ class PointOfSale extends Component<Props, State> {
                     this.resetPos();
                     toast.info(t('Saved!', 'تم الحفظ'));
                     this.closeModal('checkoutModal');
+                    console.log(this.getAppSettings());
                     // console.log(response.data);
                     this.printInvoice(response.data, this.getAppSettings());
                 }
@@ -214,7 +216,7 @@ class PointOfSale extends Component<Props, State> {
             }
         });
     };
-    
+
 
     resetPos = (): void => {
         var settings = this.getAppSettings();
@@ -551,7 +553,7 @@ class PointOfSale extends Component<Props, State> {
             .then((response: any) => {
                 this.setState({ customers: response.data.data });
             })
-            .finally(() => {});
+            .finally(() => { });
     };
 
     setCustomer = (customer: ICustomer): void => {
@@ -720,19 +722,22 @@ class PointOfSale extends Component<Props, State> {
         var barcode = data.barcode;
         if (!receipt) return;
         receipt.document.write(`<html lang="${settings.lang}" dir="${settings.dir}"><head><title>Order Receipt ${order.number}</title></head><body>`);
+        console.log(this.props);
 
         receipt.document.write(`<div style="margin-bottom: 1.5rem;text-align: center !important;">`);
-        if (settings.storeName) {
-            receipt.document.write(
-                ` <div style="padding-right: 1rem;padding-left: 1rem;margin-bottom: 0.5rem; width: 200px; margin: auto;">${settings.logo}</div>`
-            );
-        } else {
-            if (settings.storeName) {
-                receipt.document.write(`<div style="font-size: 1.50rem;">${settings.storeName}</div>`);
-            }
-        }
+        const logoPath = "./images/new_logo.png"; // Local relative path to your logo image
+
+        receipt.document.write(
+            `<div style="text-align: center; margin-bottom: 10px;">
+                <img src="${logoPath}" alt="Store Logo" style="width: 100px; height: auto;">
+            </div>`
+        );
+
+
+
+
         if (settings.storeAddress) {
-            receipt.document.write(`<div style="font-size: 1rem;">${settings.storeAddress}</div>`);
+            receipt.document.write(`<div style="font-size: 1rem;">${settings.storeAddress} ajidfjksjdf</div>`);
         }
         if (settings.storePhone) {
             receipt.document.write(`<div style="font-size: 1rem;">${settings.storePhone}</div>`);
@@ -828,9 +833,9 @@ class PointOfSale extends Component<Props, State> {
         }
         receipt.document.write('</body></html>');
         receipt.document.close();
-        receipt.focus();
-        receipt.print();
-        receipt.close();
+        // receipt.focus();
+        // receipt.print();
+        // receipt.close();
     };
 
     modalCloseButton = (): React.ReactNode => {
@@ -1770,7 +1775,7 @@ class PointOfSale extends Component<Props, State> {
                     </div>
                 </div>
                 <ToastContainer position="top-center" autoClose={2000} pauseOnHover theme="colored" hideProgressBar={true} />
-                </React.Fragment>
+            </React.Fragment>
         );
     }
 }
@@ -1780,5 +1785,5 @@ const element = document.getElementById('pos');
 if (element) {
     const props = Object.assign({}, element.dataset);
     const root = ReactDOM.createRoot(element);
-    root.render(<PointOfSale settings={''} {...props} />);
+    root.render(<PointOfSale settings={props.settings} logoUrl={props.logo} {...props} />);
 }

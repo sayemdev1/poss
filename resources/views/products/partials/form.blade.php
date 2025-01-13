@@ -264,19 +264,15 @@
         function printBarCode(param) {
     value = $(`input[name=${param}]`).val();
     box_price = $(`input[name=box_price]`).val();
+    item_name = $(`input[name="name"]`).val(); // Get the item name
     let logoHtml = '';
     let storeDetailsHtml = '';
 
     @if ($settings->logo)
         logoHtml = `
-            <div style="text-align: center; margin-bottom: 4px; height: 50px; width: auto; display: flex; align-items: center; justify-content: center;">
-    <div style="height: 100%; width: auto;">
-        {!! $settings->logo !!}
-    </div>
-</div>
-
-
-        `;
+           <div style="text-align: center; margin-bottom: 4px;">
+                {!! $settings->logo !!}
+            </div>`;
     @endif
 
     storeDetailsHtml = `
@@ -287,7 +283,6 @@
             @if ($settings->storePhone)
                 <p style="margin: 0; padding: 0;">{{ $settings->storePhone }}</p>
             @endif
-           
         </div>
     `;
 
@@ -320,12 +315,18 @@
                         }
                         .barcode-image {
                             width: 80%; /* Adjust width */
-                            height: 1.2cm; /* Adjust height */
+                            height: 1.cm; /* Adjust height */
                             margin-top: 5px;
                             margin-bottom: 10px;
                         }
+                        .item-name {
+                            font-size: 1rem;
+                            text-align: center;
+                            margin: 0; /* Remove extra spacing */
+                            font-weight: bold; /* Make it stand out */
+                        }
                         .box-price {
-                            font-size: .9rem;
+                            font-size: 0.9rem;
                             text-align: center;
                             margin: 0; /* Remove extra spacing */
                             padding: 0; /* Remove extra spacing */
@@ -341,30 +342,34 @@
                     }
                     .barcode-image {
                         width: 80%; /* Adjust width */
-                        height: 1.2cm; /* Adjust height */
+                        height: 1cm; /* Adjust height */
                         margin-top: 5px;
                         margin-bottom: 10px;
                     }
-                    .box-price {
+                    .item-name {
                         font-size: .9rem;
+                        text-align: center;
+                        margin: 0; /* Remove extra spacing */
+                        font-weight: bold; /* Make it stand out */
+                    }
+                    .box-price {
+                        font-size: 0.9rem;
                         text-align: center;
                         margin: 0; /* Remove extra spacing */
                         padding: 0; /* Remove extra spacing */
                     }
                 </style>
-
-
             </head>
             <body>
                 <div class="barcode-container">
                     ${logoHtml}
-                    ${storeDetailsHtml}
+                    <p class="item-name">${item_name}</p> <!-- Display the item name -->
                     <img 
                         src="https://barcode.orcascan.com/?type=code128&format=png&data=${value}" 
                         alt="Barcode"
                         class="barcode-image"
                     />
-                    <p class="box-price">Box Price: ${box_price}</p>
+                                                            ${storeDetailsHtml}
                 </div>
             </body>
         </html>

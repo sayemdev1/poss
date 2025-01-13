@@ -8,8 +8,8 @@
     <div style="margin-bottom: 0.2rem;text-align: center !important;">
         @if ($settings->logo)
             <div style="padding-right: 1rem;padding-left: 1rem;margin-bottom: 0.5rem">
-                <!--{!! $settings->logo !!}-->
-                <img style="width:100%" src="/images/logo.jpg" />
+                {!! $settings->logo !!}
+                <!-- <img style="width:100%" src="/images/logo.jpg" /> -->
             </div>
         @else
             @if ($settings->storeName)
@@ -19,8 +19,8 @@
         @if ($settings->storeAddress)
         
             <div style="font-size: 1rem;">
-                HAMRA
-                <!--{{ $settings->storeAddress }}-->
+                <!-- HAMRA -->
+                {{ $settings->storeAddress }}
                 </div>
         @endif
         @if ($settings->storePhone)

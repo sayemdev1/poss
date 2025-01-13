@@ -26,11 +26,16 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-fluid h-100">
         <div class="row h-100">
             <div class="col-md-12">
-                <div id="pos" data-settings="{{ json_encode($settings) }}"></div>
+                <!-- Pass settings and logo URL to React component -->
+                <div id="pos" 
+                    data-settings="{{ json_encode($settings) }}" 
+                    data-logo-url="{{ asset('images/new_logo.png') }}">
+                </div>
             </div>
         </div>
     </div>
