@@ -131,13 +131,6 @@
                             value="{{ old('retail_sku', isset($product) ? $product->retail_sku : '') }}" />
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <x-input label="IMEI" name="imei_barcode"
-                                 value="{{ old('imei_barcode', isset($product) ? $product->imei_barcode : '') }}"
-                                 formText="You can also use a scanner" />
-                    </div>
-                </div>
 
                 <div class="row">
                     <div class="col-md-12">
@@ -262,86 +255,109 @@
         });
         
         function printBarCode(param) {
-            value = $(`input[name=${param}]`).val();
-            box_price = $(`input[name=box_price]`).val();
-            let htmlContent = `
-                <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <title>Print Barcode</title>
-                        <style>
-                            @media print {
-                                /* Define size using @page */
-                                @page {
-                                    size: 4cm 4cm;
-                                    margin: 0; /* No margins for a full-bleed label */
-                                }
-                    
-                                /* Use container to match the page */
-                                body, html {
-                                    margin: 0;
-                                    padding: 0;
-                                    width: 4cm;
-                                    height: 4cm;
-                                    // overflow: hidden; /* Avoid overflow */
-                                }
-                    
-                                /* Styles for the label */
-                                .label {
-                                    width: 5.7cm;
-                                    height: 3.7cm;
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: center;
-                                    justify-content: center;
-                                    // margin-left: -2.0cm;
-                                    // margit-top: 1.0cm;
-                                }
-                    
-                                .barcode-image {
-                                    width: 70%;
-                                    height: 2.5cm;
-                                    margin-bottom: 0.1cm;
-                                }
-                            }
-                           /* Container to match the paper size */
-                            .label {
-                                width: 6cm;
-                                height: 4cm;
-                                display: flex;
-                                flex-direction: column;
-                                align-items: center;
-                                justify-content: center;
-                            }
-                            
-                            .barcode-image {
-                                margin-top:3cm;
-                                width: 70%;  /* Adjust width to fit */
-                                height: 2.5cm; /* Adjust height to fit */
-                                margin-bottom: 0.2cm;
-                            }
-                            
-                        </style>
-                        <link rel="stylesheet" type="text/css" media="print"/>
-                    </head>
-                    <body>
-                        <div class="label">
-                        <img 
+    value = $(`input[name=${param}]`).val();
+    box_price = $(`input[name=box_price]`).val();
+    let logoHtml = '';
+    let storeDetailsHtml = '';
+
+    @if ($settings->logo)
+        logoHtml = `
+            <div style="text-align: center; margin-bottom: 4px;">
+                {!! $settings->logo !!}
+            </div>
+        `;
+    @endif
+
+    storeDetailsHtml = `
+        <div style="text-align: center; margin: 0; font-size: 0.8rem; padding: 0;">
+            @if ($settings->storeAddress)
+                <p style="margin: 0; padding: 0;">{{ $settings->storeAddress }}</p>
+            @endif
+            @if ($settings->storePhone)
+                <p style="margin: 0; padding: 0;">{{ $settings->storePhone }}</p>
+            @endif
+            @if ($settings->storeEmail)
+                <p style="margin: 0; padding: 0;">{{ $settings->storeEmail }}</p>
+            @endif
+        </div>
+    `;
+
+    let htmlContent = `
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Print Barcode</title>
+                <style>
+                    @media print {
+                        @page {
+                            size: 4in 2.5in; /* Set custom page size */
+                            margin: 0;
+                        }
+                        body {
+                            margin: 0;
+                            padding: 0;
+                            width: 4in;
+                            height: 2.5in;
+                            font-family: Arial, sans-serif;
+                        }
+                        .barcode-container {
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 10px;
+                        }
+                        .barcode-image {
+                            width: 70%;
+                            height: 1.5cm;
+                            margin-top: 5px;
+                            margin-bottom: 10px;
+                        }
+                    }
+                    .barcode-container {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 10px;
+                    }
+                    .barcode-image {
+                        width: 70%;
+                        height: 1.5cm;
+                        margin-top: 5px;
+                        margin-bottom: 10px;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="barcode-container">
+                    ${storeDetailsHtml}
+                    <img 
                         src="https://barcode.orcascan.com/?type=code128&format=png&data=${value}" 
                         alt="Barcode"
                         class="barcode-image"
-                        />
-                            <p>box_price: ${box_price}</p>
-                            <p>${param}: ${value}</p>
-                        </div>
-                    </body>
-                </html>
-            `;
-        
-            let myWindow = window.open('', 'BarCodeWindow2', 'width=600,height=800');
-            myWindow.document.write(htmlContent);
-            myWindow.document.close(); // Ensure the document is complete
-        }
+                    />
+                    <p style="font-size: 1.2rem; text-align: center;">Box Price: ${box_price}</p>
+                </div>
+            </body>
+        </html>
+    `;
+
+    let printWindow = window.open('', 'BarcodePrintWindow', 'width=600,height=600');
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+
+    printWindow.onload = function() {
+        printWindow.print();
+        printWindow.close();
+    };
+}
+
+
+
+
     </script>
 @endpush
