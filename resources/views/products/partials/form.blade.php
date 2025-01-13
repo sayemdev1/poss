@@ -131,6 +131,13 @@
                             value="{{ old('retail_sku', isset($product) ? $product->retail_sku : '') }}" />
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <x-input label="IMEI" name="imei_barcode"
+                                 value="{{ old('imei_barcode', isset($product) ? $product->imei_barcode : '') }}"
+                                 formText="You can also use a scanner" />
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-12">
@@ -262,9 +269,13 @@
 
     @if ($settings->logo)
         logoHtml = `
-            <div style="text-align: center; margin-bottom: 4px;">
-                {!! $settings->logo !!}
-            </div>
+            <div style="text-align: center; margin-bottom: 4px; height: 50px; width: auto; display: flex; align-items: center; justify-content: center;">
+    <div style="height: 100%; width: auto;">
+        {!! $settings->logo !!}
+    </div>
+</div>
+
+
         `;
     @endif
 
@@ -276,9 +287,7 @@
             @if ($settings->storePhone)
                 <p style="margin: 0; padding: 0;">{{ $settings->storePhone }}</p>
             @endif
-            @if ($settings->storeEmail)
-                <p style="margin: 0; padding: 0;">{{ $settings->storeEmail }}</p>
-            @endif
+           
         </div>
     `;
 
@@ -291,14 +300,14 @@
                 <style>
                     @media print {
                         @page {
-                            size: 4in 2.5in; /* Set custom page size */
+                            size: 3.3in 1.85in; /* Set custom page size */
                             margin: 0;
                         }
                         body {
                             margin: 0;
                             padding: 0;
-                            width: 4in;
-                            height: 2.5in;
+                            width: 3.3in;
+                            height: 1.85in;
                             font-family: Arial, sans-serif;
                         }
                         .barcode-container {
@@ -310,10 +319,16 @@
                             padding: 10px;
                         }
                         .barcode-image {
-                            width: 70%;
-                            height: 1.5cm;
+                            width: 80%; /* Adjust width */
+                            height: 1.2cm; /* Adjust height */
                             margin-top: 5px;
                             margin-bottom: 10px;
+                        }
+                        .box-price {
+                            font-size: .9rem;
+                            text-align: center;
+                            margin: 0; /* Remove extra spacing */
+                            padding: 0; /* Remove extra spacing */
                         }
                     }
                     .barcode-container {
@@ -325,22 +340,31 @@
                         padding: 10px;
                     }
                     .barcode-image {
-                        width: 70%;
-                        height: 1.5cm;
+                        width: 80%; /* Adjust width */
+                        height: 1.2cm; /* Adjust height */
                         margin-top: 5px;
                         margin-bottom: 10px;
                     }
+                    .box-price {
+                        font-size: .9rem;
+                        text-align: center;
+                        margin: 0; /* Remove extra spacing */
+                        padding: 0; /* Remove extra spacing */
+                    }
                 </style>
+
+
             </head>
             <body>
                 <div class="barcode-container">
+                    ${logoHtml}
                     ${storeDetailsHtml}
                     <img 
                         src="https://barcode.orcascan.com/?type=code128&format=png&data=${value}" 
                         alt="Barcode"
                         class="barcode-image"
                     />
-                    <p style="font-size: 1.2rem; text-align: center;">Box Price: ${box_price}</p>
+                    <p class="box-price">Box Price: ${box_price}</p>
                 </div>
             </body>
         </html>
@@ -355,9 +379,6 @@
         printWindow.close();
     };
 }
-
-
-
 
     </script>
 @endpush
