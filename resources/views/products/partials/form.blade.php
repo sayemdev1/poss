@@ -315,7 +315,7 @@
                         }
                         .barcode-image {
                             width: 80%; /* Adjust width */
-                            height: 1.cm; /* Adjust height */
+                            height: 1in; /* Adjust height */
                             margin-top: 5px;
                             margin-bottom: 10px;
                         }
@@ -342,7 +342,7 @@
                     }
                     .barcode-image {
                         width: 80%; /* Adjust width */
-                        height: 1cm; /* Adjust height */
+                        height: 1in; /* Adjust height */
                         margin-top: 5px;
                         margin-bottom: 10px;
                     }
@@ -362,14 +362,13 @@
             </head>
             <body>
                 <div class="barcode-container">
-                    ${logoHtml}
                     <p class="item-name">${item_name}</p> <!-- Display the item name -->
                     <img 
                         src="https://barcode.orcascan.com/?type=code128&format=png&data=${value}" 
                         alt="Barcode"
                         class="barcode-image"
                     />
-                                                            ${storeDetailsHtml}
+                    <p class="box-price">Box Price: ${box_price}</p> <!-- Display the box price -->
                 </div>
             </body>
         </html>

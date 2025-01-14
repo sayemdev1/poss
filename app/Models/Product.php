@@ -178,7 +178,7 @@ class Product extends Model
 
         if ($hasExchangeRate) {
             $price = currency_format($this->price, $hasExchangeRate);
-            return currency_format($this->retailsale_price) . " ({$price})";
+            return currency_format($this->retailsale_price??0.0) . " ({$price})";
             // return currency_format($this->sale_price, $hasExchangeRate) . " ({$price})";
         }
         return currency_format($this->retailsale_price, $hasExchangeRate);

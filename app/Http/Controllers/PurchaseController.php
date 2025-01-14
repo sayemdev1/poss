@@ -9,6 +9,7 @@ use App\Models\PurchaseDetail;
 use App\Models\Settings;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
+use Log;
 
 class PurchaseController extends Controller
 {
@@ -45,6 +46,7 @@ class PurchaseController extends Controller
     {
         $suppliers = Supplier::orderBy('name')->get();
         $categories = Category::with('products')->orderBy('sort_order', 'ASC')->get();
+        Log::info(''. $purchase->id );
 
         return view('purchases.edit', [
             'purchase' => $purchase,

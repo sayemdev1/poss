@@ -7,6 +7,9 @@ if (!function_exists('currency_format')) {
     {
         $settings = config('settings');
 
+        $number = $number ?? 0.0; // Default to 0.0 if null
+
+
         $currencyThousandSeparator = $settings->currencyThousandSeparator;
         $currencyDecimalSeparator =  $settings->currencyDecimalSeparator;
         $showTrailingZeros =  $settings->trailingZeros;
