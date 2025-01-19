@@ -44,7 +44,7 @@
                     <x-th>@lang('Description')</x-th>
                     <x-th>@lang('Category')</x-th>
                     <x-th>@lang('Size')</x-th>
-                    <x-th>@lang('Age')</x-th>
+                    <x-th>@lang('IMEI')</x-th>
                     <x-th>@lang('Cost')</x-th>
                     <x-th>@lang('Price')</x-th>
                     <x-th>@lang('Box Price')</x-th>
@@ -110,7 +110,13 @@
                         data: 'size'
                     },
                     {
-                        data: 'age'
+                        data: 'imei_barcode',
+                        render: function(data, type, row) {
+                            if (!row.imei_barcode) {
+                                return "-";
+                            }
+                            return `${row.imei_barcode}`;
+                        }
                     },
                     {
                         data: 'cost'

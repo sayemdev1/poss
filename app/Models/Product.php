@@ -41,6 +41,7 @@ class Product extends Model
         'box_price',
         'size',
         'age',
+        'imei_barcode',
         'color',
         'in_stock',
         'track_stock',

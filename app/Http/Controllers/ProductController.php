@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 
 class ProductController extends Controller
@@ -61,6 +62,8 @@ class ProductController extends Controller
         // $this->data['total_box_price'] = currency_format($sum_box_price, $hasExchangeRate).' ('.currency_format($sum_box_price).')';
         // $this->data['total_whole_box_price'] = currency_format($total_whole_box_price, $hasExchangeRate).' ('.currency_format($total_whole_box_price).')';
         // $this->data['total_in_stock'] = Product::sum('in_stock');
+
+        Log::info('Hello   ',$this->data);
 
         return view("products.index", $this->data);
     }

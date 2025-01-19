@@ -51,6 +51,7 @@ class ProductController extends Controller
                 "box_price" => $record->box_price,
                 "size" => $record->size,
                 "age" => $record->age,
+                "imei_barcode" => $record->imei_barcode,
                 "color" => $record->color,
                 // "sale_price" => $record->table_view_price,
                 "retailsale_price" => $record->table_view_price,
