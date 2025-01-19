@@ -81,6 +81,7 @@ declare class PointOfSale extends Component<Props, State> {
     removeItem: (item: ICartItem) => void;
     addToCart: (product: IProduct) => void;
     handleSearchSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+    checkIMEI: (searchValue: string, imeiData: string) => boolean;
     handleSearchChange: (event: React.FormEvent<HTMLInputElement>) => void;
     handleVatTypeChange: (event: any) => void;
     handleSelectItem: (e: React.FormEvent<HTMLSelectElement>) => void;

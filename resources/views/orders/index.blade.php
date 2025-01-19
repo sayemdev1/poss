@@ -216,7 +216,7 @@
                     </tr>
                 </x-thead>
             </x-table>
-
+            
         </div>
     </div>
 
@@ -248,7 +248,7 @@
                                 ${row.number}
                             </a>`;
                         }
-                    },
+                    }, 
                     {
                         orderable: false,
                         data: "customer_name"
@@ -281,7 +281,7 @@
                         orderable: false,
                         data: "owe"
                     },
-
+                    
                     {
                         orderable: false,
                         data: "created_at"

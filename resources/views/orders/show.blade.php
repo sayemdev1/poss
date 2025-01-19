@@ -57,155 +57,139 @@
                         <td width="50%">{{ $order->customer->email }}</td>
                     </tr>
                     <tr>
-                        <td width="50%">@lang('Phone')</td>
+                        <td width="50%">@lang('Mobile')</td>
                         <td width="50%">{{ $order->customer->mobile }}</td>
                     </tr>
-                    <!-- <tr>
+                    <tr>
                         <td width="50%">@lang('Telephone')</td>
                         <td width="50%">{{ $order->customer->telephone }}</td>
                     </tr>
                     <tr>
                         <td width="50%">@lang('Address')</td>
                         <td width="50%">{{ $order->customer->full_address }}</td>
-                    </tr> -->
+                    </tr>
                 </tbody>
             </table>
         </x-card>
     @endif
     <x-card class="mb-3">
-        <div class="card-title h4">@lang('Payment')</div>
-        <div class="row">
-            <div class="col-md-12">
-                <table class="table table-bordered table-hover mb-0">
-                    <tbody>
-                        <tr>
-                            <td width="50%">@lang('Subtotal')</td>
-                            <td width="50%">{{ $order->subtotal_view }}</td>
-                        </tr>
-                        <tr>
-                            <td width="50%">@lang('Delivery Charge')</td>
-                            <td width="50%">{{ $order->delivery_charge_view }}</td>
-                        </tr>
-                        <tr>
-                            <td width="50%">@lang('Discount')</td>
-                            <td width="50%">{{ $order->discount_view }}</td>
-                        </tr>
-                        @if ($order->tax_rate > 0)
-                            @if ($order->vat_type == 'add')
-                                <tr>
-                                    <td width="50%">@lang('VAT') {{ $order->tax_rate }}%</td>
-                                    <td width="50%">{{ $order->total_tax_view }}</td>
-                                </tr>
+            <div class="card-title h4">@lang('Payment')</div>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td width="50%">@lang('Subtotal')</td>
+                                <td width="50%">{{ $order->subtotal_view }}</td>
+                            </tr>
+                            <tr>
+                                <td width="50%">@lang('Delivery Charge')</td>
+                                <td width="50%">{{ $order->delivery_charge_view }}</td>
+                            </tr>
+                            <tr>
+                                <td width="50%">@lang('Discount')</td>
+                                <td width="50%">{{ $order->discount_view }}</td>
+                            </tr>
+                            @if ($order->tax_rate > 0)
+                                @if ($order->vat_type == 'add')
+                                    <tr>
+                                        <td width="50%">@lang('VAT') {{ $order->tax_rate }}%</td>
+                                        <td width="50%">{{ $order->total_tax_view }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td width="50%">@lang('VAT') {{ $order->tax_rate }}%</td>
+                                        <td width="50%">{{ $order->vat_view }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td width="50%">@lang('Tax Amount')</td>
+                                        <td width="50%">{{ $order->tax_amount_view }}</td>
+                                    </tr>
+                                @endif
                             @else
                                 <tr>
                                     <td width="50%">@lang('VAT') {{ $order->tax_rate }}%</td>
-                                    <td width="50%">{{ $order->vat_view }}</td>
-                                </tr>
-                                <tr>
-                                    <td width="50%">@lang('Tax Amount')</td>
-                                    <td width="50%">{{ $order->tax_amount_view }}</td>
+                                    <td width="50%">-</td>
                                 </tr>
                             @endif
-                        @else
-                            <tr>
-                                <td width="50%">@lang('VAT') {{ $order->tax_rate }}%</td>
-                                <td width="50%">-</td>
+                            <tr class="fw-bold">
+                                <td width="50%">@lang('Total')</td>
+                                <td width="50%">
+                                    <div>{{ $order->total_view }}</div>
+                                    <div>{{ $order->receipt_exchange_rate }}</div>
+                                </td>
                             </tr>
-                        @endif
-                        <tr class="fw-bold">
-                            <td width="50%">@lang('Total')</td>
-                            <td width="50%">
-                                <div>{{ $order->total_view }}</div>
-                                <div>{{ $order->receipt_exchange_rate }}</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-bordered table-hover mb-0">
+                        <tbody>
+                            <tr>
+                                <td width="50%">@lang('Paid')</td>
+                                <td width="50%">{{ $order->tender_amount_view }}</td>
+                            </tr>
+                            <tr>
+                                <td width="50%">@lang('Return')</td>
+                                <td width="50%">{{ $order->return_amount_view }}</td>
+                            </tr>
+                            <tr>
+                                <td width="50%">@lang('State')</td>
+                                <td width="50%">
+                                    @if( $order->paid )
+                                        <div>@lang('Paid')</div>
+                                    @else
+                                        <div>@lang('Unpaid')</div>
+                                    @endif
+                                </td>
+                            </tr>
+                            {{-- <tr>
+                                <td width="50%">@lang('Change')</td>
+                                <td width="50%">{{ $order->change_view }}</td>
+                            </tr>
+                            <tr>
+                                <td width="50%">@lang('Owe')</td>
+                                <td width="50%">{{ $order->owe_view }}</td>
+                            </tr> --}}
+                            @can_edit
+                            <tr>
+                                <td width="50%">@lang('Cost')</td>
+                                <td width="50%">{{ $order->cost_view }}</td>
+                            </tr>
+                            <tr class=" alert-success">
+                                <td width="50%">@lang('Profit')</td>
+                                <td width="50%">{{ $order->profit_view }}</td>
+                            </tr>
+                            @endcan_edit
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <!-- <div class="col-md-6">
-                <table class="table table-bordered table-hover mb-0">
-                    <tbody>
-                        <tr>
-                            <td width="50%">@lang('Paid')</td>
-                            <td width="50%">{{ $order->tender_amount_view }}</td>
-                        </tr>
-                        <tr>
-                            <td width="50%">@lang('Return')</td>
-                            <td width="50%">{{ $order->return_amount_view }}</td>
-                        </tr>
-                        <tr>
-                            <td width="50%">@lang('State')</td>
-                            <td width="50%">
-                                @if( $order->paid )
-                                    <div>@lang('Paid')</div>
-                                @else
-                                    <div>@lang('Unpaid')</div>
-                                @endif
-                            </td>
-                        </tr>
-                        {{-- <tr>
-                            <td width="50%">@lang('Change')</td>
-                            <td width="50%">{{ $order->change_view }}</td>
-                        </tr>
-                        <tr>
-                            <td width="50%">@lang('Owe')</td>
-                            <td width="50%">{{ $order->owe_view }}</td>
-                        </tr> --}}
-                        @can_edit
-                        <tr>
-                            <td width="50%">@lang('Cost')</td>
-                            <td width="50%">{{ $order->cost_view }}</td>
-                        </tr>
-                        <tr class=" alert-success">
-                            <td width="50%">@lang('Profit')</td>
-                            <td width="50%">{{ $order->profit_view }}</td>
-                        </tr>
-                        @endcan_edit
-                    </tbody>
-                </table>
-            </div> -->
-        </div>
-    </x-card>
+        </x-card>
 
 
-    @if ($order->has_customer)
-    <!-- Order Details -->
+
     <x-card>
-        <div class="card-title h4">@lang('Order Details')</div>
         <x-table>
             <x-thead>
-                <x-th>@lang('IMAGE')</x-th>
-                <x-th>@lang('ITEM')</x-th>
-                <x-th>@lang('BARCODE')</x-th>
-                <x-th>@lang('LOCATION')</x-th>
-                <x-th>@lang('CATEGORY')</x-th>
+                <x-th>@lang('ITEM NAME')</x-th>
                 <x-th>@lang('QUANTITY')</x-th>
-                <x-th>@lang('PRICE')</x-th>
+                <x-th>@lang('RETAIL PRICE')</x-th>
+                <x-th>@lang('WHOLESALE PRICE')</x-th>
                 <x-th>@lang('TOTAL')</x-th>
             </x-thead>
             <tbody class="border-top-0">
                 @foreach ($order->order_details as $detail)
                     <tr>
-                        <x-td>
-                            <img src="{{ asset($detail->product->image_url) }}" alt="{{ $detail->product->name }}" class="rounded me-2" height="35">
-                        </x-td>
                         <x-td>{{ $detail->product->name }}</x-td>
-                        <x-td>
-                            <div class="text-center">
-                                <img src="https://barcode.orcascan.com/?type=code128&format=png&data={{ $detail->product->retail_barcode }}" alt="Barcode" class="rounded me-2" height="35">
-                                <div class="mt-2">{{ $detail->product->retail_barcode }}</div>
-                            </div>
-                        </x-td>
-                        <x-td>{{ $order->customer->full_address}}</x-td>
-                        <x-td>{{ $detail->product->category->name }}</x-td>
                         <x-td>{{ $detail->quantity }}</x-td>
-                        <x-td>{{ $detail->price }}</x-td>
-                        <x-td>{{ $detail->total }}</x-td>
+                        <x-td>{{ $detail->view_retailprice }}</x-td>
+                        <x-td>{{ $detail->view_wholeprice }}</x-td>
+                        <x-td>{{ $detail->view_total }}</x-td>
                     </tr>
                 @endforeach
             </tbody>
         </x-table>
     </x-card>
-    @endif
 
 @endsection

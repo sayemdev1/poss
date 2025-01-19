@@ -17,7 +17,8 @@
                     <select name="supplier" id="supplier" class="form-select">
                         <option value="">@lang('Select Supplier')</option>
                         @foreach ($suppliers as $supplier)
-                            <option value="{{ $supplier->id }}" @selected($purchase->supplier_id == $supplier->id)>{{ $supplier->name }}
+                            <option value="{{ $supplier->id }}" @selected($purchase->supplier_id == $supplier->id)>
+                                {{ $supplier->name }}
                             </option>
                         @endforeach
                     </select>
@@ -53,14 +54,15 @@
         <div class="card-body">
             <div class="mb-3">
                 <label for="barcode-imei-input" class="form-label">@lang('Scan Barcode or IMEI')</label>
-                <input type="text" id="barcode-imei-input" class="form-control" placeholder="@lang('Enter barcode or IMEI')">
+                <input type="text" id="barcode-imei-input" class="form-control"
+                    placeholder="@lang('Enter barcode or IMEI')">
             </div>
             <div class="table-responsive mb-3">
                 <table class="table table-bordered mb-1" id="table-items">
                     <thead>
                         <tr>
                             <th class="text-center fw-bold">@lang('Barcode')</th>
-                            <th class="text-center fw-bold">@lang('IMEI')</th>
+                            <!-- <th class="text-center fw-bold">@lang('IMEI')</th> -->
                             <th class="text-center fw-bold">@lang('Item')</th>
                             <th class="text-center fw-bold">@lang('Quantity')</th>
                             <th class="text-center fw-bold">@lang('Unit Cost') ({{ $currency }})</th>
@@ -71,7 +73,6 @@
                         @foreach ($purchase->purchase_details as $detail)
                             <tr>
                                 <td>{{ $detail->product->retail_barcode ?? '-' }}</td>
-                                <td>{{ $detail->product->imei_barcode ?? '-' }}</td>
                                 <td>
                                     <select class="form-select" name="item[]" required>
                                         <option value="">@lang('Select Item')</option>
@@ -87,10 +88,12 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control input-stock text-center" name="quantity[]" value="{{ $detail->quantity }}" required>
+                                    <input type="text" class="form-control input-stock text-center" name="quantity[]"
+                                        value="{{ $detail->quantity }}" required>
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control input-number text-center" name="cost[]" value="{{ $detail->cost }}" required>
+                                    <input type="text" class="form-control input-number text-center" name="cost[]"
+                                        value="{{ $detail->cost }}" required>
                                 </td>
                                 <td>
                                     <button type="button" class="btn btn-link p-0 text-danger btn-remove">
@@ -113,7 +116,8 @@
         <div class="card-body">
             <div class="mb-3">
                 <label for="notes" class="form-label">@lang('Notes')</label>
-                <textarea name="notes" id="notes" class="form-control @error('notes') is-invalid @enderror" rows="3">{{ old('notes', $purchase->notes) }}</textarea>
+                <textarea name="notes" id="notes" class="form-control @error('notes') is-invalid @enderror"
+                    rows="3">{{ old('notes', $purchase->notes) }}</textarea>
 
                 @error('notes')
                     <div class="invalid-feedback">
@@ -136,21 +140,20 @@
         const barcodeImeiInput = document.querySelector('#barcode-imei-input');
 
         // Function to add an item to the table
-        function addItemToTable(product) {
+        function addItemToTable(product, imeiMatched) {
             const row = `
                 <tr>
                     <td>${product.retail_barcode || '-'}</td>
-                    <td>${product.imei_barcode || '-'}</td>
                     <td>
                         <select class="form-select" name="item[]" required>
                             <option value="${product.id}" selected>${product.name}</option>
                         </select>
                     </td>
                     <td>
-                        <input type="text" class="form-control input-stock text-center" name="quantity[]" value="1" required>
+                        <input type="number" class="form-control input-stock text-center" name="quantity[]" value="1" required>
                     </td>
                     <td>
-                        <input type="text" class="form-control input-number text-center" name="cost[]" value="${product.cost}" required>
+                        <input type="number" class="form-control input-number text-center" name="cost[]" value="${product.cost}" required>
                     </td>
                     <td>
                         <button type="button" class="btn btn-link p-0 text-danger btn-remove">
@@ -173,17 +176,22 @@
 
             products.forEach(category => {
                 category.products.forEach(product => {
-                    if ((product.retail_barcode && product.retail_barcode === input) ||
-                        (product.imei_barcode && product.imei_barcode === input)) {
-                        addItemToTable(product);
-                        barcodeImeiInput.value = ''; // Clear the input
+                    // Split IMEI list, remove spaces, and check if input matches any IMEI
+                    let imeiList = product.imei_barcode ? product.imei_barcode.split(',').map(i => i.trim()) : [];
+
+                    if (
+                        (product.retail_barcode && product.retail_barcode === input) ||
+                        imeiList.includes(input) // Check if input IMEI exists in the list
+                    ) {
+                        addItemToTable(product, input); // Add the product to the table
+                        barcodeImeiInput.value = ''; // Clear the input field
                         found = true;
                     }
                 });
             });
 
             if (!found) {
-                console.log('@lang("No product found with this barcode or IMEI.")');
+                console.log("❌ No product found with this barcode or IMEI.");
             }
         });
 

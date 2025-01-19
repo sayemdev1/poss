@@ -456,74 +456,59 @@ class PointOfSale extends Component<Props, State> {
         if (!search) return;
         let searchValue = search.toLowerCase().trim();
         let productFound = 0;
-        this.state.categories.map((category: ICategory) => {
+    
+        this.state.categories.forEach((category: ICategory) => {
             let _prod;
             switch (this.state.currentPrice) {
-                case 0:
+                case 0: // Retail Price Search
                     _prod = category.products.find(
                         p =>
                             p.name.toLowerCase().includes(searchValue) ||
-                            p?.retail_barcode?.toLowerCase() == searchValue ||
-                            p?.retail_sku?.toLowerCase() == searchValue ||
-                            p?.imei_barcode?.toLowerCase() == searchValue
-                        // || p?.barcode?.toLowerCase() == searchValue || p?.sku?.toLowerCase() == searchValue
+                            p?.retail_barcode?.toLowerCase() === searchValue ||
+                            p?.retail_sku?.toLowerCase() === searchValue ||
+                            (p?.imei_barcode && this.checkIMEI(searchValue, p.imei_barcode))
                     );
                     break;
-                case 1:
+    
+                case 1: // Wholesale Price Search
                     _prod = category.products.find(
                         p =>
                             p.name.toLowerCase().includes(searchValue) ||
-                            p?.wholesale_barcode?.toLowerCase() == searchValue ||
-                            p?.wholesale_sku?.toLowerCase() == searchValue
-                        // || p?.barcode?.toLowerCase() == searchValue || p?.sku?.toLowerCase() == searchValue
+                            p?.wholesale_barcode?.toLowerCase() === searchValue ||
+                            p?.wholesale_sku?.toLowerCase() === searchValue ||
+                            (p?.imei_barcode && this.checkIMEI(searchValue, p.imei_barcode))
                     );
                     break;
+    
                 default:
-                    // _prod = category.products.find(
-                    //     p => p.name.toLowerCase().includes(searchValue) || p?.barcode?.toLowerCase() == searchValue || p?.sku?.toLowerCase() == searchValue
-                    // );
                     return;
             }
-
-            for (let i = 0; i < this.state.cart.length; i++) {
-                if (_prod !== undefined && _prod.id === this.state.cart[i].id) {
-                    _prod = undefined;
-                    productFound = 2;
-                    console.log(_prod);
-                    console.log(this.state.cart[i]);
-                    // Check if 'quantity' is defined before using it
-                    this.state.cart[i].quantity = (this.state.cart[i].quantity ?? 0) + 1;
-                    this.setState({ ...this.state, cart: this.state.cart });
-                    console.log(this.state.cart[i]);
-                    break;
-                }
-            }
-
+    
             if (_prod) {
                 if (_prod.in_stock <= 0) productFound = 3;
                 else {
                     this.addToCart(_prod);
                     productFound = 1;
-                    if (productFound) {
-                        this.setState({ searchValue: null });
-                        var searchInput: any = document.getElementById('barcode-input');
-                        if (searchInput) {
-                            searchInput.value = '';
-                        }
-                    }
+                    this.setState({ searchValue: '' });
                     return;
                 }
             }
         });
-        if (productFound == 0) {
+    
+        if (productFound === 0) {
             toast.error(t('No results found!', 'لم يتم العثور على نتائج!'));
         }
-
-        if (productFound == 3) {
+    
+        if (productFound === 3) {
             toast.error(t('Product out of stock!', 'المنتج غير متوفر!'));
         }
     };
-
+    checkIMEI = (searchValue: string, imeiData: string): boolean => {
+        if (!imeiData) return false;
+        const imeiList = imeiData.split(',').map(imei => imei.trim().toLowerCase());
+        return imeiList.includes(searchValue);
+    };
+    
     handleSearchChange = (event: React.FormEvent<HTMLInputElement>): void => {
         this.setState({ searchValue: event.currentTarget.value });
     };

@@ -9,7 +9,6 @@
         @if ($settings->logo)
             <div style="padding-right: 1rem;padding-left: 1rem;margin-bottom: 0.5rem">
                 {!! $settings->logo !!}
-                <!-- <img style="width:100%" src="/images/logo.jpg" /> -->
             </div>
         @else
             @if ($settings->storeName)
@@ -17,11 +16,7 @@
             @endif
         @endif
         @if ($settings->storeAddress)
-        
-            <div style="font-size: 1rem;">
-                <!-- HAMRA -->
-                {{ $settings->storeAddress }}
-                </div>
+            <div style="font-size: 1rem;">{{ $settings->storeAddress }}</div>
         @endif
         @if ($settings->storePhone)
             <div style="font-size: 0.875em;">{{ $settings->storePhone }}</div>

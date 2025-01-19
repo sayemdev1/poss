@@ -132,12 +132,37 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12">
-                        <x-input label="IMEI" name="imei_barcode"
-                                 value="{{ old('imei_barcode', isset($product) ? $product->imei_barcode : '') }}"
-                                 formText="You can also use a scanner" />
-                    </div>
+    <div class="col-md-12">
+        <label for="imei_barcode">@lang('IMEI')</label>
+        <div id="imei-container">
+            @php
+                $imeiBarcodes = isset($product) && is_array($product->imei_barcode) 
+                    ? $product->imei_barcode 
+                    : (isset($product) && is_string($product->imei_barcode) ? explode(',', $product->imei_barcode) : []);
+            @endphp
+
+            <!-- First IMEI Field (Filled from Data) -->
+            <div class="input-group mb-2 imei-field">
+                <input type="text" name="imei_barcode[]" class="form-control imei-input" 
+                       value="{{ old('imei_barcode.0', $imeiBarcodes[0] ?? '') }}" 
+                       placeholder="Scan or enter IMEI" />
+                <button type="button" id="add-imei" class="btn btn-success">+</button>
+            </div>
+
+            <!-- Additional IMEI Fields -->
+            @foreach(array_slice($imeiBarcodes, 1) as $index => $imei)
+                <div class="input-group mb-2 imei-field">
+                    <input type="text" name="imei_barcode[]" class="form-control imei-input" 
+                           value="{{ old('imei_barcode.' . ($index + 1), $imei) }}" 
+                           placeholder="Scan or enter IMEI" />
+                    <button type="button" class="btn btn-danger remove-imei">X</button>
                 </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+
 
                 <div class="row">
                     <div class="col-md-12">
@@ -385,4 +410,56 @@
 }
 
     </script>
+@endpush
+
+
+@push('script')
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let imeiContainer = document.getElementById("imei-container");
+        let addImeiBtn = document.getElementById("add-imei");
+
+        // Function to create a new IMEI input field
+        function addImeiField() {
+            let newField = document.createElement("div");
+            newField.classList.add("input-group", "mb-2", "imei-field");
+            newField.innerHTML = `
+                <input type="text" name="imei_barcode[]" class="form-control imei-input" 
+                       placeholder="Scan or enter IMEI" />
+                <button type="button" class="btn btn-danger remove-imei">X</button>
+            `;
+            imeiContainer.appendChild(newField);
+        }
+
+        // When the user clicks the "Add" button, add a new IMEI field
+        addImeiBtn.addEventListener("click", function() {
+            addImeiField();
+        });
+
+        // Detect input changes in IMEI fields and add a new field automatically
+        imeiContainer.addEventListener("input", function(event) {
+            if (event.target.classList.contains("imei-input")) {
+                let imeiFields = document.querySelectorAll(".imei-input");
+                let lastField = imeiFields[imeiFields.length - 1];
+
+                // If the last input field has data, add a new empty field
+                if (lastField.value.trim() !== "") {
+                    addImeiField();
+                }
+            }
+        });
+
+        // Remove IMEI field on button click
+        imeiContainer.addEventListener("click", function(event) {
+            if (event.target.classList.contains("remove-imei")) {
+                let fieldGroup = event.target.closest(".imei-field");
+
+                // Only remove if there's more than one field
+                if (imeiContainer.querySelectorAll(".imei-field").length > 1) {
+                    fieldGroup.remove();
+                }
+            }
+        });
+    });
+</script>
 @endpush

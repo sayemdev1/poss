@@ -58,7 +58,7 @@
                     <thead>
                         <tr>
                             <th class="text-center fw-bold">@lang('Barcode')</th>
-                            <th class="text-center fw-bold">@lang('IMEI')</th>
+                            <!-- <th class="text-center fw-bold">@lang('IMEI')</th> -->
                             <th class="text-center fw-bold">@lang('Item')</th>
                             <th class="text-center fw-bold">@lang('Quantity')</th>
                             <th class="text-center fw-bold">@lang('Unit Cost') ({{ $currency }})</th>
@@ -92,7 +92,7 @@
     </div>
 </form>
 @endsection
-
+<!--  <td>${product.imei_barcode || '-'}</td>-->
 @push('script')
     <script>
         const products = @json($categories); // Categories and products data
@@ -104,7 +104,7 @@
             const row = `
                 <tr>
                     <td>${product.retail_barcode || '-'}</td>
-                    <td>${product.imei_barcode || '-'}</td>
+                    
                     <td>
                         <select class="form-select" name="item[]" required>
                             <option value="${product.id}" selected>${product.name}</option>
@@ -130,28 +130,31 @@
 
         // Event listener for barcode/IMEI input
         barcodeImeiInput.addEventListener('input', function () {
-            const input = this.value.trim();
-            if (!input) return;
+    const input = this.value.trim();
+    if (!input) return;
 
-            let found = false;
+    let found = false;
 
-            // Search for product by barcode or IMEI
-            products.forEach(category => {
-                category.products.forEach(product => {
-                    if ((product.retail_barcode && product.retail_barcode === input) ||
-                        (product.imei_barcode && product.imei_barcode === input)) {
-                        addItemToTable(product); // Add the product to the table
-                        barcodeImeiInput.value = ''; // Clear the input
-                        found = true;
-                    }
-                });
-            });
+    // Search for product by barcode or IMEI
+    products.forEach(category => {
+        category.products.forEach(product => {
+            let imeiList = product.imei_barcode ? product.imei_barcode.split(',').map(i => i.trim()) : [];
 
-            if (!found) {
-                console.log('@lang("No product found with this barcode or IMEI.")');
+            if (
+                (product.retail_barcode && product.retail_barcode === input) ||
+                imeiList.includes(input) // Check if input IMEI exists in the list
+            ) {
+                addItemToTable(product); // Add the product to the table
+                barcodeImeiInput.value = ''; // Clear the input
+                found = true;
             }
         });
+    });
 
+    if (!found) {
+        console.log("❌ No product found with this barcode or IMEI.");
+    }
+});
         // Remove row functionality
         document.addEventListener('click', function (event) {
             if (event.target.matches('.btn-remove, .btn-remove *')) {

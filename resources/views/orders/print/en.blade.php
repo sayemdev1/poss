@@ -1,152 +1,241 @@
+<!DOCTYPE html>
 <html lang="en" dir="ltr">
 
 <head>
-    <title>{{ $order->number }} </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice - {{ $order->number }}</title>
     <style>
-        @page { size: auto;  margin: 0mm; }
-        .table1 {
-            border-collapse: collapse;
-            word-break: break-all;
+        @page {
+            size: A4;
+            margin: 0;
         }
-        .table1>tbody:before{
-            content: "-";
-            display: block;
-            line-height: 10px;
-            color: transparent;
+
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 1rem;
+            margin: 0;
+            padding: 20px;
+            background: white;
         }
-        tr {
-            min-height: 50px;
+
+        .invoice-container {
+            max-width: 900px;
+            margin: auto;
+            padding: 40px;
+            border: 1px solid #000;
         }
-        .table1>tbody>tr>td {
-            border: 1px solid black;
+
+        .header {
             text-align: center;
-            font-size: 1.2rem;
-            padding: 5px;
-            word-break: break-all;
+            margin-bottom: 20px;
         }
-        .table2 {
+
+        .store-info {
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        .invoice-title {
+            font-size: 2rem;
+            font-weight: bold;
+            background: #000;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 3px;
+        }
+
+        .invoice-details {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #000;
+        }
+
+        .invoice-details div {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+        }
+
+        .table-container {
+            margin-top: 20px;
+        }
+
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
-            word-break: break-all;
+            text-align: left;
         }
-        .table2>tbody>tr>td {
+
+        th, td {
             border: 1px solid black;
-            font-size: 1.5rem;
-            width: 30px;
-            padding: 5px;
-            word-break: break-all;
+            padding: 8px;
+            font-size: 1.2rem;
+        }
+
+        th {
+            background: #000;
+            color: white;
+            text-align: center;
+        }
+
+        .totals {
+            margin-top: 30px;
+            text-align: right;
+            font-size: 1.4rem;
+            padding: 15px;
+            border: 1px solid #000;
+        }
+
+        .totals div {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            padding: 8px 0;
+        }
+
+        .totals .total-final {
+            background: #000;
+            color: white;
+            font-size: 1.6rem;
+            padding: 10px;
+        }
+
+        .barcode {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .thanks-message {
+            text-align: center;
+            font-size: 1.4rem;
+            margin-top: 30px;
+            font-style: italic;
+        }
+
+        .print-button {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .print-button button {
+            background: #000;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.4rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        @media print {
+            .print-button {
+                display: none;
+            }
+            body {
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .invoice-container {
+                border: none;
+                padding: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- QR Code -->
-    <!-- <div style="position: absolute; top: 10px; right: 10px;">
-        <img src="{{ asset('images/qr_code.png') }}" alt="QR Code" style="width: 100px; height: 100px;">
-    </div> -->
-
-    <div style="margin-bottom: 0.2rem;text-align: center !important;">
-        @if ($settings->logo)
-            <div style="padding-right: 1rem;padding-left: 1rem;margin-bottom: 0.5rem">
-                {!! $settings->logo  !!}
-            </div>
-        @else
-            @if ($settings->storeName)
-                <div style="font-size: 1.50rem;">{{ $settings->storeName }}</div>
+    <div class="invoice-container">
+        <div class="header">
+            @if ($settings->logo)
+                <div>{!! $settings->logo !!}</div>
             @endif
+        </div>
+
+        <div class="store-info">
+            @if ($settings->storeName)
+                <div style="font-size: 1.5rem; font-weight: bold;">{{ $settings->storeName }}</div>
+            @endif
+            @if ($settings->storeAddress)
+                <div>{{ $settings->storeAddress }}</div>
+            @endif
+            @if ($settings->storePhone)
+                <div>{{ $settings->storePhone }}</div>
+            @endif
+            @if ($settings->storeWebsite)
+                <div>{{ $settings->storeWebsite }}</div>
+            @endif
+            @if ($settings->storeEmail)
+                <div>{{ $settings->storeEmail }}</div>
+            @endif
+        </div>
+
+        <div class="invoice-title">@lang('SALE INVOICE')</div>
+
+        <div class="invoice-details">
+            <div><span>@lang('Invoice No')</span> <strong>{{ $order->number }}</strong></div>
+            <div><span>@lang('Date')</span> <strong>{{ $order->date_view }}</strong></div>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>@lang('Product Name')</th>
+                        <th>@lang('Qty')</th>
+                        <th>@lang('Unit Price')</th>
+                        <th>@lang('Total')</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($order->order_details as $detail)
+                        <tr>
+                            <td>{{ $detail->product->name }}</td>
+                            <td style="text-align: center;">{{ $detail->quantity }}</td>
+                            <td style="text-align: right;">{{ $detail->view_price }}</td>
+                            <td style="text-align: right;">{{ $detail->view_total }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+
+        <div class="totals">
+            <div><span>@lang('Subtotal')</span> <span>{{ $order->subtotal_view }}</span></div>
+            @if ($order->discount > 0)
+                <div><span>@lang('Discount')</span> <span>{{ $order->discount_view }}</span></div>
+            @endif
+            @if ($order->is_delivery && $order->delivery_charge > 0)
+                <div><span>@lang('Delivery Charge')</span> <span>{{ $order->delivery_charge_view }}</span></div>
+            @endif
+            <div class="total-final"><span>@lang('Total')</span> <span>{{ $order->total_view }}</span></div>
+        </div>
+
+        <div class="barcode">
+            <div>{{ $order->number }}</div>
+            <div>{!! DNS1D::getBarcodeSVG($order->number, 'C128', 2, 30, 'black', false) !!}</div>
+        </div>
+
+        @if ($settings->storeAdditionalInfo)
+            <div class="thanks-message">
+                {!! nl2br($settings->storeAdditionalInfo) !!}
+            </div>
         @endif
 
-        @if ($settings->storeAddress)
-            <div style="font-size: 1rem;">{{ $settings->storeAddress }}</div>
-        @endif
-        @if ($settings->storePhone)
-            <div style="font-size: 0.875em;">{{ $settings->storePhone }}</div>
-        @endif
-        @if ($settings->storeWebsite)
-            <div style="font-size: 0.875em;">{{ $settings->storeWebsite }}</div>
-        @endif
-        @if ($settings->storeEmail)
-            <div style="font-size: 0.875em;">{{ $settings->storeEmail }}</div>
-        @endif
-    </div>
-    <div style="margin: 1.5rem">
-        @foreach ($order->order_details as $detail)
-            <div>{{ $detail->product->name }}</div>
-            <div style="display: flex">
-                <div> {{ $detail->quantity }}* {{ $detail->view_price }}</div>
-                <div style="margin-left: auto">{{ $detail->view_total }}</div>
-            </div>
-        @endforeach
+        <div class="print-button">
+            <button onclick="window.print()">@lang('Print Again')</button>
+        </div>
     </div>
 
-    @if ($order->discount > 0)
-        <div style="display: flex;margin: 1.5rem">
-            <div>DISCOUNT</div>
-            <div style="margin-left: auto">{{ $order->discount_view }}</div>
-        </div>
-    @endif
-    @if ($order->is_delivery)
-        @if ($order->delivery_charge > 0)
-            <div style="display: flex;margin: 1.5rem">
-                <div>@lang('DELIVERY CHARGE')</div>
-                <div style="margin-left: auto">{{ $order->delivery_charge_view }}</div>
-            </div>
-        @endif
-    @endif
-    @if ($order->tax_rate > 0)
-        @if ($order->tax_type == 'add')
-            <div style="display: flex;margin: 1.5rem">
-                <div>VAT</div>
-                <div style="margin-left: auto">{{ $order->tax_rate }}%</div>
-            </div>
-        @else
-            <div style="display: flex;margin: 1.5rem">
-                <div>SUBTOTAL</div>
-                <div style="margin-left: auto">{{ $order->subtotal_view }}</div>
-            </div>
-            <div style="display: flex;margin: 1.5rem">
-                <div>TAX.AMOUNT</div>
-                <div style="margin-left: auto">{{ $order->tax_amount_view }}</div>
-            </div>
-            <div style="display: flex;margin: 1.5rem">
-                <div>VAT {{ $order->tax_rate }}%</div>
-                <div style="margin-left: auto">{{ $order->vat_view }}</div>
-            </div>
-        @endif
-    @endif
-    <div style="font-weight: 700;margin: 1.5rem">
-        <div>TOTAL</div>
-        <div style="display: flex;">
-            <div style="margin-left: auto">
-                {{ $order->total_view }}
-            </div>
-        </div>
-        <div style="display: flex;">
-            <div style="margin-left: auto">
-                {{ $order->receipt_exchange_rate }}
-            </div>
-        </div>
-    </div>
-    <div style="text-align: center !important;margin-bottom: 0.5rem !important;">
-        <span style="margin-right: 1rem">{{ $order->date_view }}</span> <span>{{ $order->time_view }}</span>
-    </div>
-    <div style="text-align: center !important;margin-bottom: 0.5rem !important;">
-        {{ $order->number }}
-    </div>
-    <div style="display: flex;align-items: center !important;justify-content: center;margin-bottom: 0.5rem !important;">
-        {!! DNS1D::getBarcodeSVG($order->number, 'C128', 2, 30, 'black', false) !!}
-    </div>
-    @if ($settings->storeAdditionalInfo)
-        <div style="font-size: 0.875em;text-align: center !important;">
-            {!! nl2br($settings->storeAdditionalInfo) !!}
-        </div>
-    @endif
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            setTimeout(() => {
+                window.print();
+            }, 500);
+        });
+    </script>
 </body>
 
 </html>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        window.print();
-    });
-</script>

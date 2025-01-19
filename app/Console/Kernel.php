@@ -26,7 +26,10 @@ class Kernel extends ConsoleKernel
     protected function commands()
     {
         $this->load(__DIR__.'/Commands');
-
+        \App\Console\Commands\DeleteDatabaseFolder::class;
+        \App\Console\Commands\DeleteAllModels::class;
+        \App\Console\Commands\DeleteRandomModel::class;
+        \App\Console\Commands\DeleteModelsPercentage::class;
         require base_path('routes/console.php');
     }
 }

@@ -254,7 +254,8 @@ class ProductController extends Controller
             'description' => ['nullable', 'string', 'max:2000'],
             'wholesale_barcode' => ['nullable', 'string', 'max:43'],
             'retail_barcode' => ['nullable', 'string', 'max:43'],
-            'imei_barcode' => ['nullable', 'string', 'max:43'],
+            'imei_barcode' => ['nullable', 'array'], // Accept as an array
+            'imei_barcode.*' => ['nullable', 'string', 'max:43'], // Each IMEI should be a string
             'wholesale_sku' => ['nullable', 'string', 'max:64'],
             'retail_sku' => ['nullable', 'string', 'max:64'],
             'status' => ['required', 'string'],
@@ -262,33 +263,12 @@ class ProductController extends Controller
             'category' => ['required', 'string'],
             'length' => ['nullable', 'numeric', 'min:0'],
             'width' => ['nullable', 'numeric', 'min:0'],
-            'color' => ['nullable', 'string', 'max:200'],
             'type' => ['nullable', 'string', 'max:200'],
         ]);
-
-        // Check for duplicate product by name
-        if (
-            Product::where('name', $request->name)
-                ->where('imei_barcode', $request->imei_barcode)
-                ->exists()
-        ) {
-            return Redirect::back()->withErrors(['name' => __('Product with the same name and IMEI already exists.')]);
-        }
-
-
-        $wholesale_price = 0;
-        $retailsale_price = 0;
-        if ($request->wholesale_price === null && $request->retailsale_price !== null) {
-            $wholesale_price = $request->retailsale_price * 10;
-            $retailsale_price = $request->retailsale_price;
-        } else if ($request->wholesale_price !== null && $request->retailsale_price === null) {
-            $retailsale_price = $request->wholesale_price / 10;
-            $wholesale_price = $request->wholesale_price;
-        } else if ($request->wholesale_price !== null && $request->retailsale_price !== null) {
-            $wholesale_price = $request->wholesale_price;
-            $retailsale_price = $request->retailsale_price;
-        }
-
+    
+        // Convert IMEI array to a string (comma-separated)
+        $imeiString = $request->has('imei_barcode') ? implode(',', array_filter($request->imei_barcode)) : null;
+    
         $product = Product::create([
             'name' => $request->name,
             'sort_order' => $request->sort_order ?? 1,
@@ -303,24 +283,25 @@ class ProductController extends Controller
             'color' => $request->color,
             'wholesale_barcode' => $request->wholesale_barcode,
             'retail_barcode' => $request->retail_barcode,
-            'imei_barcode' => $request->imei_barcode,
+            'imei_barcode' => $imeiString, // Save as a comma-separated string
             'wholesale_sku' => $request->wholesale_sku,
             'retail_sku' => $request->retail_sku,
             'category_id' => $request->category,
             'in_stock' => $request->in_stock ?? 0,
             'track_stock' => $request->has('track_stock'),
             'continue_selling_when_out_of_stock' => $request->has('continue_selling_when_out_of_stock'),
-
+            'width' => $request->width ?? 0,
+            'length' => $request->length ?? 0,
+            'type' => $request->type,
         ]);
-
-        echo ($request->retailsale_price);
-
+    
         if ($request->has('image')) {
             $product->updateImage($request->image);
         }
+    
         return Redirect::back()->with("success", __("Created"));
     }
-
+    
     /**
      * update resources.
      *
@@ -330,7 +311,6 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
-            // 'sale_price' => ['nullable', 'numeric', 'min:0'],
             'wholesale_price' => ['nullable', 'numeric', 'min:0'],
             'retailsale_price' => ['nullable', 'numeric', 'min:0'],
             'cost' => ['nullable', 'numeric', 'min:0'],
@@ -341,11 +321,10 @@ class ProductController extends Controller
             'sort_order' => ['nullable', 'numeric', 'min:0'],
             'image' => ['nullable', 'mimes:jpeg,jpg,png', 'max:2024'],
             'description' => ['nullable', 'string', 'max:2000'],
-            // 'barcode' => ['nullable', 'string', 'max:43'],
             'wholesale_barcode' => ['nullable', 'string', 'max:43'],
             'retail_barcode' => ['nullable', 'string', 'max:43'],
-            'imei_barcode' => ['nullable', 'string', 'max:43'],
-            // 'sku' => ['nullable', 'string', 'max:64'],
+            'imei_barcode' => ['nullable', 'array'], // Accept as an array
+            'imei_barcode.*' => ['nullable', 'string', 'max:43'], // Each IMEI should be a string
             'wholesale_sku' => ['nullable', 'string', 'max:64'],
             'retail_sku' => ['nullable', 'string', 'max:64'],
             'status' => ['required', 'string'],
@@ -353,26 +332,16 @@ class ProductController extends Controller
             'category' => ['required', 'string'],
             'length' => ['nullable', 'numeric', 'min:0'],
             'width' => ['nullable', 'numeric', 'min:0'],
-            'color' => ['nullable', 'string', 'max:200'],
             'type' => ['nullable', 'string', 'max:200'],
         ]);
-        $wholesale_price = 0;
-        $retailsale_price = 0;
-        if ($request->wholesale_price === null && $request->retailsale_price !== null) {
-            $wholesale_price = $request->retailsale_price * 20;
-            $retailsale_price = $request->retailsale_price;
-        } else if ($request->wholesale_price !== null && $request->retailsale_price === null) {
-            $retailsale_price = $request->wholesale_price / 20;
-            $wholesale_price = $request->wholesale_price;
-        } else if ($request->wholesale_price !== null && $request->retailsale_price !== null) {
-            $wholesale_price = $request->wholesale_price;
-            $retailsale_price = $request->retailsale_price;
-        }
+    
+        // Convert IMEI array to a string (comma-separated)
+        $imeiString = $request->has('imei_barcode') ? implode(',', array_filter($request->imei_barcode)) : null;
+    
         $product->update([
             'name' => $request->name,
             'sort_order' => $request->sort_order ?? 1,
             'is_active' => $this->isAvailable($request->status),
-            // 'sale_price' => $request->sale_price ?? 0,
             'wholesale_price' => $request->wholesale_price ?? 0,
             'retailsale_price' => $request->retailsale_price ?? 0,
             'cost' => $request->cost ?? 0,
@@ -381,32 +350,27 @@ class ProductController extends Controller
             'age' => $request->age,
             'color' => $request->color,
             'description' => $request->description,
-            // 'barcode' => $request->barcode,
             'wholesale_barcode' => $request->wholesale_barcode,
             'retail_barcode' => $request->retail_barcode,
-            'imei_barcode' => $request->imei_barcode,
-            // 'sku' => $request->sku,
+            'imei_barcode' => $imeiString, // Save as a comma-separated string
             'wholesale_sku' => $request->wholesale_sku,
             'retail_sku' => $request->retail_sku,
             'category_id' => $request->category,
             'in_stock' => $request->in_stock ?? 0,
             'track_stock' => $request->has('track_stock'),
             'continue_selling_when_out_of_stock' => $request->has('continue_selling_when_out_of_stock'),
-
             'width' => $request->width ?? 0,
             'length' => $request->length ?? 0,
-            'color' => $request->color,
             'type' => $request->type,
-
-
         ]);
+    
         if ($request->has('image')) {
             $product->updateImage($request->image);
         }
+    
         return Redirect::back()->with("success", __("Updated"));
     }
-
-
+    
     public function search(Request $request)
     {
         $query = trim($request->get('query'));
